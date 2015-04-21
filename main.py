@@ -14,18 +14,17 @@ debug_headers = ("akamai-x-cache-on",
 
 base_url = r"http://downloadcenter.samsung.com/content/SW/201211/20121129051929115/Samsung_USB_Driver_for_Mobile_Phones_v1.5.14.0.exe"
 
+
+request = urllib2.Request(base_url)
+request_headers = ""
+
 for debug_header in debug_headers:
-    header = {"Pragma" : debug_header}
-    request = urllib2.Request(base_url, headers=header)
-    response = urllib2.urlopen(request)
-    print debug_header
+    request_headers = request_headers + "," + debug_header
 
-    response_headers = response.info()
+request.add_header("Pragma", request_headers[1:])
+response = urllib2.urlopen(request)
+response_headers = response.info()
 
-    #print response_headers
-
-    for response_header in response_headers:
-        if "x-" in response_header and not "x-powered-by" in response_header:
-            print response_header, response_headers.getheader(response_header)
-
-    print ''
+for response_header in response_headers:
+    if "x-" in response_header and not "x-powered-by" in response_header:
+        print response_header, response_headers.getheader(response_header)
